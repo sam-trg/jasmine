@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Scratch to Reveal</title>
+<title>Scratch to Reveal Carousel</title>
 <style>
   html, body {
     margin: 0;
@@ -21,14 +21,19 @@
   #hiddenImage {
     position: absolute;
     inset: 0;
-    background: url('me_and_sister.jpg') center/cover no-repeat;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     z-index: 0;
+    transition: background-image 1s ease-in-out;
   }
   #scratchCanvas {
     position: absolute;
     inset: 0;
     z-index: 1;
     touch-action: none;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
   }
   #overlayText {
     position: absolute;
@@ -62,6 +67,18 @@
 <audio id="celebrationSound" src="celebration.mp3" preload="auto"></audio>
 
 <script>
+const photos = ['1.jpg', '2.jpg', '3.jpg'];
+let currentIndex = 0;
+const hiddenImage = document.getElementById('hiddenImage');
+function setImage(index) {
+  hiddenImage.style.backgroundImage = `url('${photos[index]}')`;
+}
+setImage(currentIndex);
+setInterval(() => {
+  currentIndex = (currentIndex + 1) % photos.length;
+  setImage(currentIndex);
+}, 5000);
+
 const scratchCanvas = document.getElementById('scratchCanvas');
 const ctx = scratchCanvas.getContext('2d');
 const overlayText = document.getElementById('overlayText');
@@ -75,7 +92,7 @@ function resizeCanvas() {
   scratchCanvas.height = window.innerHeight;
   confettiCanvas.width = window.innerWidth;
   confettiCanvas.height = window.innerHeight;
-  ctx.fillStyle = '#ccc';
+  ctx.fillStyle = 'rgba(255,255,255,0.7)';
   ctx.fillRect(0, 0, scratchCanvas.width, scratchCanvas.height);
 }
 resizeCanvas();
@@ -105,7 +122,7 @@ function draw(e) {
   const pos = getPos(e);
   ctx.globalCompositeOperation = 'destination-out';
   ctx.beginPath();
-  ctx.arc(pos.x, pos.y, 20, 0, Math.PI * 2);
+  ctx.arc(pos.x, pos.y, 35, 0, Math.PI * 2); // larger radius
   ctx.fill();
 }
 
